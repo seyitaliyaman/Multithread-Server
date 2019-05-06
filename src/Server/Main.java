@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +31,7 @@ public class Main extends Application {
     private Socket socket;
     private DataInputStream inputFromClient;
     private DataOutputStream outputToClient;
-    private String currentDirectory= "C:/Users/HP";
+    private String rootDirectory= "C:/Users/HP";
 
     @Override
     public void start(Stage primaryStage){
@@ -99,7 +96,7 @@ public class Main extends Application {
 
                     switch (cmds[0]){
                         case "ls":
-                            outputToClient.writeUTF(commandLS(currentDirectory.trim()));
+                            outputToClient.writeUTF(commandLS(rootDirectory.trim()));
                             break;
                         case "cd":
                             commandCD(cmdsnd);
@@ -114,7 +111,7 @@ public class Main extends Application {
 
                             break;
                         case "pwd":
-                            outputToClient.writeUTF(currentDirectory);
+                            outputToClient.writeUTF(rootDirectory);
                             break;
                         case "rm":
 
@@ -127,6 +124,13 @@ public class Main extends Application {
                             break;
                         case "write":
 
+
+
+                            if(commandWRITE(cmds[1],cmds[2])){
+                                outputToClient.writeUTF("Directory has moved!");
+                            }else{
+                                outputToClient.writeUTF("Directory has already moved!!");
+                            }
                             break;
                         case "read":
 
@@ -169,14 +173,14 @@ public class Main extends Application {
     }
 
     public void commandCD (String directoryName){
-        currentDirectory=directoryName;
+        rootDirectory=directoryName;
 
     }
 
     public boolean commandMKDIR (String directoryName){
 
         //boolean create=false;
-        Path path = Paths.get(currentDirectory.trim()+"\\"+directoryName.trim());
+        Path path = Paths.get(rootDirectory.trim()+"\\"+directoryName.trim());
         if(!Files.exists((path))){
             try {
                 Files.createDirectories(path);
@@ -199,7 +203,7 @@ public class Main extends Application {
 
 
     public boolean commandRM(String fileName){
-        Path path = Paths.get(currentDirectory.trim()+"\\"+fileName.trim());
+        Path path = Paths.get(rootDirectory.trim()+"\\"+fileName.trim());
         if(Files.exists((path))){
             try {
                 Files.delete(path);
@@ -213,7 +217,20 @@ public class Main extends Application {
         }
     }
 
-    public void commandWRITE(String sourceFileName,String destFileName){
+    public boolean commandWRITE(String sourceFileName,String destFileName){
+        Path sourcePath = Paths.get(sourceFileName);
+        Path destinationPath = Paths.get(destFileName);
+
+        if(Files.exists(destinationPath)){
+            try {
+                Files.move(sourcePath,destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }else{
+            return false;
+        }
 
     }
 
