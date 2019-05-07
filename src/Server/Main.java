@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -20,6 +19,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
+
+//Server klasörü olacak ve onun dışına çıkmayacak
+//Exceptionlar ayarlanacak (Oluşabilecek hatalarda error message dönderecek)
+//Yeni client açıldığı zaman root directoryden başlayacak
+//İsteğe bağlı görsel güzelleştirmeler yapılabilir
+//
 
 public class Main extends Application {
 
@@ -127,9 +133,9 @@ public class Main extends Application {
 
 
                             if(commandWRITE(cmds[1],cmds[2])){
-                                outputToClient.writeUTF("Directory has moved!");
+                                outputToClient.writeUTF("Directory has copied!");
                             }else{
-                                outputToClient.writeUTF("Directory has already moved!!");
+                                outputToClient.writeUTF("Directory has already copied!!");
                             }
                             break;
                         case "read":
@@ -139,6 +145,11 @@ public class Main extends Application {
 
                         default:
 
+                            if(commandREAD(cmds[1],cmds[2])){
+                                outputToClient.writeUTF("Directory has copied!");
+                            }else{
+                                outputToClient.writeUTF("Directory has already copied!!");
+                            }
                             outputToClient.writeUTF("Command doesn't exist!!!");
                             break;
                     }
@@ -162,7 +173,7 @@ public class Main extends Application {
             for(Path path : directoryStream){
                 fileNames.add(path.toString());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -185,7 +196,7 @@ public class Main extends Application {
             try {
                 Files.createDirectories(path);
                 //create=true;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -207,7 +218,7 @@ public class Main extends Application {
         if(Files.exists((path))){
             try {
                 Files.delete(path);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -221,21 +232,47 @@ public class Main extends Application {
         Path sourcePath = Paths.get(sourceFileName);
         Path destinationPath = Paths.get(destFileName);
 
-        if(Files.exists(destinationPath)){
+        /*if(Files.exists(destinationPath)){
             try {
-                Files.move(sourcePath,destinationPath, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
+                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return true;
         }else{
             return false;
+        }*/
+        try {
+            Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        return Files.exists(destinationPath);
 
     }
 
-    public void commandREAD(String sourceFileName,String destFileName){
+    public boolean commandREAD(String sourceFileName, String destFileName){
+        Path sourcePath = Paths.get(sourceFileName);
+        Path destinationPath = Paths.get(destFileName);
 
+        /*if(Files.exists(destinationPath)){
+            try {
+                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return true;
+        }else{
+            return false;
+        }*/
+        try {
+            Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Files.exists(destinationPath);
     }
 
 
