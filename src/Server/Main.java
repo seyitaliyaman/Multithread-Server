@@ -33,11 +33,9 @@ public class Main extends Application {
     private TextArea textArea=new TextArea();
     private int clientNo = 0;
     private Scene scene;
-    private ServerSocket serverSocket;
-    private Socket socket;
-    private DataInputStream inputFromClient;
-    private DataOutputStream outputToClient;
-    private String rootDirectory= "C:/Users/HP";
+
+
+
 
     @Override
     public void start(Stage primaryStage){
@@ -46,15 +44,13 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(()->{
                 try {
-                    serverSocket = new ServerSocket(9000);
+                    ServerSocket serverSocket = new ServerSocket(9000);
                     textArea.appendText("Server started at "+new Date()+"\n");
 
                     while (true){
-                        socket = serverSocket.accept();
+                        Socket socket = serverSocket.accept();
                         clientNo++;
 
                         Platform.runLater(new Runnable() {
@@ -71,22 +67,23 @@ public class Main extends Application {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
+
         }).start();
     }
 
     class HandleClient implements Runnable{
         private Socket socket;
-
-        HandleClient(Socket socket){
+        private String rootDirectory;
+        public HandleClient(Socket socket){
             this.socket=socket;
+            this.rootDirectory= "C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server";
         }
 
         @Override
         public void run() {
             try {
-                inputFromClient = new DataInputStream(socket.getInputStream());
-                outputToClient = new DataOutputStream(socket.getOutputStream());
+                DataInputStream inputFromClient = new DataInputStream(socket.getInputStream());
+                DataOutputStream outputToClient = new DataOutputStream(socket.getOutputStream());
 
                 while (true){
                     String command = inputFromClient.readUTF();
@@ -105,8 +102,19 @@ public class Main extends Application {
                             outputToClient.writeUTF(commandLS(rootDirectory.trim()));
                             break;
                         case "cd":
-                            commandCD(cmdsnd);
-                            outputToClient.writeUTF("Directory has changed!");
+
+                            if(commandCD(cmdsnd)){
+                                outputToClient.writeUTF("Directory has changed!");
+                            }else{
+                                outputToClient.writeUTF("Can not change root directory");
+                            }
+                            /*if(cmdsnd.contains("C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server")){
+
+                            }else{
+                                commandCD(cmdsnd);
+
+                            }*/
+
                             break;
                         case "mkdir":
                             if(commandMKDIR(cmdsnd)){
@@ -144,20 +152,136 @@ public class Main extends Application {
 
 
                         default:
-
-                            if(commandREAD(cmds[1],cmds[2])){
-                                outputToClient.writeUTF("Directory has copied!");
-                            }else{
-                                outputToClient.writeUTF("Directory has already copied!!");
-                            }
                             outputToClient.writeUTF("Command doesn't exist!!!");
                             break;
                     }
+
+
 
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        public String commandLS (String directory){
+            String output = "";
+            List<String> fileNames = new ArrayList<>();
+            try {
+                DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(directory));
+                for(Path path : directoryStream){
+                    fileNames.add(path.toString());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            for(String name: fileNames){
+                output+=name.substring(directory.length()+1)+"\n";
+            }
+            return output;
+        }
+
+        public boolean commandCD (String directoryName){
+            if(directoryName.contains("C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server")){
+                Path path = Paths.get(directoryName.trim());
+                if(Files.exists(path)){
+                    rootDirectory=directoryName;
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
+            }
+
+        }
+
+        public boolean commandMKDIR (String directoryName){
+
+            //boolean create=false;
+            Path path = Paths.get(rootDirectory.trim()+"\\"+directoryName.trim());
+            if(!Files.exists((path))){
+                try {
+                    Files.createDirectories(path);
+                    //create=true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+            }else{
+                return false;
+            }
+
+       /* if(create){
+            return true;
+        }else{
+            return false;
+        }*/
+        }
+
+
+        public boolean commandRM(String fileName){
+            Path path = Paths.get(rootDirectory.trim()+"\\"+fileName.trim());
+            if(Files.exists((path))){
+                try {
+                    Files.delete(path);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        public boolean commandWRITE(String sourceFileName,String destFileName){
+            Path sourcePath = Paths.get(sourceFileName);
+            Path destinationPath = Paths.get(destFileName);
+
+        /*if(Files.exists(destinationPath)){
+            try {
+                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return true;
+        }else{
+            return false;
+        }*/
+            try {
+                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return Files.exists(destinationPath);
+
+        }
+
+        public boolean commandREAD(String sourceFileName, String destFileName){
+            Path sourcePath = Paths.get(sourceFileName);
+            Path destinationPath = Paths.get(destFileName);
+
+        /*if(Files.exists(destinationPath)){
+            try {
+                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return true;
+        }else{
+            return false;
+        }*/
+            try {
+                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return Files.exists(destinationPath);
         }
     }
 
@@ -165,115 +289,7 @@ public class Main extends Application {
 
 
 
-    public String commandLS (String directory){
-        String output = "";
-        List<String> fileNames = new ArrayList<>();
-        try {
-            DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(directory));
-            for(Path path : directoryStream){
-                fileNames.add(path.toString());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        for(String name: fileNames){
-            output+=name.substring(directory.length()+1)+"\n";
-        }
-        return output;
-    }
-
-    public void commandCD (String directoryName){
-        rootDirectory=directoryName;
-
-    }
-
-    public boolean commandMKDIR (String directoryName){
-
-        //boolean create=false;
-        Path path = Paths.get(rootDirectory.trim()+"\\"+directoryName.trim());
-        if(!Files.exists((path))){
-            try {
-                Files.createDirectories(path);
-                //create=true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return true;
-        }else{
-            return false;
-        }
-
-       /* if(create){
-            return true;
-        }else{
-            return false;
-        }*/
-    }
-
-
-    public boolean commandRM(String fileName){
-        Path path = Paths.get(rootDirectory.trim()+"\\"+fileName.trim());
-        if(Files.exists((path))){
-            try {
-                Files.delete(path);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    public boolean commandWRITE(String sourceFileName,String destFileName){
-        Path sourcePath = Paths.get(sourceFileName);
-        Path destinationPath = Paths.get(destFileName);
-
-        /*if(Files.exists(destinationPath)){
-            try {
-                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return true;
-        }else{
-            return false;
-        }*/
-        try {
-            Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return Files.exists(destinationPath);
-
-    }
-
-    public boolean commandREAD(String sourceFileName, String destFileName){
-        Path sourcePath = Paths.get(sourceFileName);
-        Path destinationPath = Paths.get(destFileName);
-
-        /*if(Files.exists(destinationPath)){
-            try {
-                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return true;
-        }else{
-            return false;
-        }*/
-        try {
-            Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return Files.exists(destinationPath);
-    }
 
 
 

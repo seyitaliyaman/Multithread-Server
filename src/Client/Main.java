@@ -22,8 +22,8 @@ import java.net.Socket;
 
 public class Main extends Application {
 
-    private DataInputStream fromServer;
-    private DataOutputStream toServer;
+    private DataInputStream fromServer = null;
+    private DataOutputStream toServer = null;
     private TextField textField;
     private TextArea textArea;
     private BorderPane paneForTF,mainPane;
