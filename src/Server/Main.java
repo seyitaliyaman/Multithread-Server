@@ -34,15 +34,23 @@ public class Main extends Application {
     private int clientNo = 0;
     private Scene scene;
 
-
-
-
     @Override
     public void start(Stage primaryStage){
         scene = new Scene(new ScrollPane(textArea),450,200);
         primaryStage.setTitle("SERVER");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        Path path = Paths.get("./ServerFile");
+        if(!Files.exists((path))) {
+            try {
+                System.out.println("var ki");
+                Files.createDirectories(path);
+                //create=true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         new Thread(()->{
                 try {
@@ -76,7 +84,8 @@ public class Main extends Application {
         private String rootDirectory;
         public HandleClient(Socket socket){
             this.socket=socket;
-            this.rootDirectory= "C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server";
+
+            this.rootDirectory= "./ServerFile";//"C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server";
         }
 
         @Override
@@ -183,24 +192,24 @@ public class Main extends Application {
         }
 
         public boolean commandCD (String directoryName){
-            if(directoryName.contains("C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server")){
+            //if(directoryName.contains("C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server")){
                 Path path = Paths.get(directoryName.trim());
                 if(Files.exists(path)){
-                    rootDirectory=directoryName;
+                    rootDirectory = directoryName;
                     return true;
                 }else{
                     return false;
                 }
-            }else{
-                return false;
-            }
+            //}else{
+              //  return false;
+            //}
 
         }
 
         public boolean commandMKDIR (String directoryName){
 
             //boolean create=false;
-            Path path = Paths.get(rootDirectory.trim()+"\\"+directoryName.trim());
+            Path path = Paths.get(rootDirectory.trim()+"/"+directoryName.trim());
             if(!Files.exists((path))){
                 try {
                     Files.createDirectories(path);
@@ -223,7 +232,7 @@ public class Main extends Application {
 
 
         public boolean commandRM(String fileName){
-            Path path = Paths.get(rootDirectory.trim()+"\\"+fileName.trim());
+            Path path = Paths.get(rootDirectory.trim()+"/"+fileName.trim());
             if(Files.exists((path))){
                 try {
                     Files.delete(path);

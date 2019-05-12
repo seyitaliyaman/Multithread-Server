@@ -19,6 +19,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Main extends Application {
 
@@ -34,7 +37,7 @@ public class Main extends Application {
 //C:\Users\HP
     @Override
     public void start(Stage primaryStage){
-        label.setText("C:/");
+        label.setText("./Server");
         paneForTF = new BorderPane();
         paneForTF.setPadding(new Insets(5,5,5,5));
         paneForTF.setStyle("-fx-border-color: green");
@@ -55,8 +58,19 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        Path path = Paths.get("./ClientFolder");
+        if(!Files.exists((path))) {
+            try {
+                System.out.println("var ki");
+                Files.createDirectories(path);
+                //create=true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         String cmd = "dir seyit ali dir";
-        String []kelime = null;
+        String [] kelime = null;
         kelime = cmd.split("dir");
         for(int i=0; i<kelime.length;  i++){
             System.out.println(kelime[i]);
