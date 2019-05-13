@@ -109,13 +109,16 @@ public class Main extends Application {
                     switch (cmds[0]){
                         case "ls":
                             outputToClient.writeUTF(commandLS(rootDirectory.trim()));
+                            textArea.appendText("Client"+clientNo+" listed directory.");
                             break;
                         case "cd":
 
                             if(commandCD(cmdsnd)){
                                 outputToClient.writeUTF("Directory has changed!");
+                                textArea.appendText("Client"+clientNo+" is in "+rootDirectory);
                             }else{
                                 outputToClient.writeUTF("Can not change root directory");
+                                textArea.appendText("Client"+clientNo+" could not change directory.");
                             }
                             /*if(cmdsnd.contains("C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server")){
 
@@ -139,7 +142,7 @@ public class Main extends Application {
                         case "rm":
 
                             if(commandRM(cmdsnd)){
-                                outputToClient.writeUTF("Directory has remove!");
+                                outputToClient.writeUTF("Directory has removed!");
                             }else{
                                 outputToClient.writeUTF("Directory already removed!");
                             }
@@ -150,13 +153,18 @@ public class Main extends Application {
 
 
                             if(commandWRITE(cmds[1],cmds[2])){
-                                outputToClient.writeUTF("Directory has copied!");
+                                outputToClient.writeUTF("Directory has copied to Server!");
                             }else{
-                                outputToClient.writeUTF("Directory has already copied!!");
+                                outputToClient.writeUTF("Could not copied!");
                             }
                             break;
                         case "read":
 
+                            if(commandREAD(cmds[1],cmds[2])){
+                                outputToClient.writeUTF("Directory has copied to Client!");
+                            }else{
+                                outputToClient.writeUTF("Could not copied!");
+                            }
                             break;
 
 
@@ -192,7 +200,7 @@ public class Main extends Application {
         }
 
         public boolean commandCD (String directoryName){
-            //if(directoryName.contains("C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server")){
+            if(directoryName.contains("./ServerFile")){
                 Path path = Paths.get(directoryName.trim());
                 if(Files.exists(path)){
                     rootDirectory = directoryName;
@@ -200,9 +208,9 @@ public class Main extends Application {
                 }else{
                     return false;
                 }
-            //}else{
-              //  return false;
-            //}
+            }else{
+                return false;
+            }
 
         }
 

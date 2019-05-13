@@ -98,6 +98,7 @@ public class Main extends Application {
             textField.setText("");
             try {
                 toServer.writeUTF(command);
+                textArea.appendText(command+"\n");
                 toServer.flush();
                 String response = fromServer.readUTF();
                 textArea.appendText(response+"\n");
