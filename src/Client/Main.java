@@ -34,10 +34,10 @@ public class Main extends Application {
     private Label label = new Label();
 
     private Socket socket;
-//C:\Users\HP
+
     @Override
     public void start(Stage primaryStage){
-        label.setText("./Server");
+        label.setText("Command:");
         paneForTF = new BorderPane();
         paneForTF.setPadding(new Insets(5,5,5,5));
         paneForTF.setStyle("-fx-border-color: green");
@@ -61,20 +61,18 @@ public class Main extends Application {
         Path path = Paths.get("./ClientFolder");
         if(!Files.exists((path))) {
             try {
-                System.out.println("var ki");
                 Files.createDirectories(path);
-                //create=true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        String cmd = "dir seyit ali dir";
+       /* String cmd = "dir seyit ali dir";
         String [] kelime = null;
         kelime = cmd.split("dir");
         for(int i=0; i<kelime.length;  i++){
             System.out.println(kelime[i]);
-        }
+        }*/
 
         try {
             socket = new Socket("localhost",9000);
@@ -98,7 +96,7 @@ public class Main extends Application {
             textField.setText("");
             try {
                 toServer.writeUTF(command);
-                textArea.appendText(command+"\n");
+                textArea.appendText("Executed Command: "+command+"\n");
                 toServer.flush();
                 String response = fromServer.readUTF();
                 textArea.appendText(response+"\n");

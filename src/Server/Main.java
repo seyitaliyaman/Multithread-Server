@@ -53,6 +53,7 @@ public class Main extends Application {
         }
 
         new Thread(()->{
+
                 try {
                     ServerSocket serverSocket = new ServerSocket(9000);
                     textArea.appendText("Server started at "+new Date()+"\n");
@@ -60,17 +61,18 @@ public class Main extends Application {
                     while (true){
                         Socket socket = serverSocket.accept();
                         clientNo++;
+                        int client = clientNo;
 
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
                                 InetAddress inet = socket.getInetAddress();
-                                textArea.appendText("Client "+clientNo+"'s host name is "+inet.getHostName()+"\n");
-                                textArea.appendText("Client "+clientNo+"'s IP Address is "+inet.getHostAddress()+"\n");
+                                textArea.appendText("Client "+client+"'s host name is "+inet.getHostName()+"\n");
+                                textArea.appendText("Client "+client+"'s IP Address is "+inet.getHostAddress()+"\n");
                             }
                         });
 
-                        new Thread(new HandleClient(socket)).start();
+                        new Thread(new HandleClient(socket,client)).start();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -82,9 +84,10 @@ public class Main extends Application {
     class HandleClient implements Runnable{
         private Socket socket;
         private String rootDirectory;
-        public HandleClient(Socket socket){
+        private int client;
+        public HandleClient(Socket socket,int client){
             this.socket=socket;
-
+            this.client=client;
             this.rootDirectory= "./ServerFile";//"C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server";
         }
 
@@ -109,16 +112,16 @@ public class Main extends Application {
                     switch (cmds[0]){
                         case "ls":
                             outputToClient.writeUTF(commandLS(rootDirectory.trim()));
-                            textArea.appendText("Client"+clientNo+" listed directory.");
+                            textArea.appendText("Client "+client+" listed directory.\n");
                             break;
                         case "cd":
 
                             if(commandCD(cmdsnd)){
-                                outputToClient.writeUTF("Directory has changed!");
-                                textArea.appendText("Client"+clientNo+" is in "+rootDirectory);
+                                outputToClient.writeUTF("Directory has changed!\n");
+                                textArea.appendText("Client "+client+" is in "+rootDirectory+"\n");
                             }else{
-                                outputToClient.writeUTF("Can not change root directory");
-                                textArea.appendText("Client"+clientNo+" could not change directory.");
+                                outputToClient.writeUTF("Can not change root directory\n");
+                                textArea.appendText("Client "+client+" could not change directory.\n");
                             }
                             /*if(cmdsnd.contains("C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server")){
 
@@ -129,10 +132,10 @@ public class Main extends Application {
 
                             break;
                         case "mkdir":
-                            if(commandMKDIR(cmdsnd)){
-                                outputToClient.writeUTF("Directory has created!");
+                            if(commandMKDIR(cmdsnd,client)){
+                                outputToClient.writeUTF("Directory has created!\n");
                             }else{
-                                outputToClient.writeUTF("Directory already exist!");
+                                outputToClient.writeUTF("Directory already exist!\n");
                             }
 
                             break;
@@ -141,10 +144,10 @@ public class Main extends Application {
                             break;
                         case "rm":
 
-                            if(commandRM(cmdsnd)){
-                                outputToClient.writeUTF("Directory has removed!");
+                            if(commandRM(cmdsnd,client)){
+                                outputToClient.writeUTF("Directory has removed!\n");
                             }else{
-                                outputToClient.writeUTF("Directory already removed!");
+                                outputToClient.writeUTF("Directory already removed!\n");
                             }
 
                             break;
@@ -152,24 +155,24 @@ public class Main extends Application {
 
 
 
-                            if(commandWRITE(cmds[1],cmds[2])){
-                                outputToClient.writeUTF("Directory has copied to Server!");
+                            if(commandWRITE(cmds[1],cmds[2],client)){
+                                outputToClient.writeUTF("Directory has copied to Server!\n");
                             }else{
-                                outputToClient.writeUTF("Could not copied!");
+                                outputToClient.writeUTF("Could not copied!\n");
                             }
                             break;
                         case "read":
 
-                            if(commandREAD(cmds[1],cmds[2])){
-                                outputToClient.writeUTF("Directory has copied to Client!");
+                            if(commandREAD(cmds[1],cmds[2],client)){
+                                outputToClient.writeUTF("Directory has copied to Client!\n");
                             }else{
-                                outputToClient.writeUTF("Could not copied!");
+                                outputToClient.writeUTF("Could not copied!\n");
                             }
                             break;
 
 
                         default:
-                            outputToClient.writeUTF("Command doesn't exist!!!");
+                            outputToClient.writeUTF("Command doesn't exist!!!\n");
                             break;
                     }
 
@@ -214,7 +217,7 @@ public class Main extends Application {
 
         }
 
-        public boolean commandMKDIR (String directoryName){
+        public boolean commandMKDIR (String directoryName,int clientNo){
 
             //boolean create=false;
             Path path = Paths.get(rootDirectory.trim()+"/"+directoryName.trim());
@@ -225,7 +228,7 @@ public class Main extends Application {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
+                textArea.appendText("Client"+clientNo+" created directory "+directoryName);
                 return true;
             }else{
                 return false;
@@ -239,7 +242,7 @@ public class Main extends Application {
         }
 
 
-        public boolean commandRM(String fileName){
+        public boolean commandRM(String fileName,int clientNo){
             Path path = Paths.get(rootDirectory.trim()+"/"+fileName.trim());
             if(Files.exists((path))){
                 try {
@@ -247,14 +250,14 @@ public class Main extends Application {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
+                textArea.appendText("Client"+clientNo+" deleted "+fileName);
                 return true;
             }else{
                 return false;
             }
         }
 
-        public boolean commandWRITE(String sourceFileName,String destFileName){
+        public boolean commandWRITE(String sourceFileName,String destFileName, int clientNo){
             Path sourcePath = Paths.get(sourceFileName);
             Path destinationPath = Paths.get(destFileName);
 
@@ -273,12 +276,14 @@ public class Main extends Application {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            if (Files.exists(destinationPath)){
+                textArea.appendText("Client"+clientNo+" uploaded "+destFileName);
+            }
             return Files.exists(destinationPath);
 
         }
 
-        public boolean commandREAD(String sourceFileName, String destFileName){
+        public boolean commandREAD(String sourceFileName, String destFileName ,int clientNo){
             Path sourcePath = Paths.get(sourceFileName);
             Path destinationPath = Paths.get(destFileName);
 
@@ -296,6 +301,10 @@ public class Main extends Application {
                 Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+
+            if (Files.exists(destinationPath)){
+                textArea.appendText("Client"+clientNo+" downloaded "+destFileName);
             }
 
             return Files.exists(destinationPath);
