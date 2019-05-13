@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Write command added">
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="inişıl olmayan komit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/CMD Project/Client/Main$ServerSenderHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CMD Project/Client/Main$ServerSenderHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/CMD Project/Client/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CMD Project/Client/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CMD Project/Server/Main$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CMD Project/Server/Main$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/CMD Project/Server/Main$HandleClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CMD Project/Server/Main$HandleClient.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/CMD Project/Server/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CMD Project/Server/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Client/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client/Main.java" afterDir="false" />
@@ -73,10 +74,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Client/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="100" column="49" selection-start-line="100" selection-start-column="49" selection-end-line="100" selection-end-column="49" />
+            <state relative-caret-position="1156">
+              <caret line="107" column="55" selection-start-line="107" selection-start-column="55" selection-end-line="107" selection-end-column="55" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#3351#3352#0" expanded="true" />
+                <element signature="e#3379#3380#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -85,8 +88,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Server/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1527">
-              <caret line="111" column="85" selection-start-line="111" selection-start-column="85" selection-end-line="111" selection-end-column="85" />
+            <state relative-caret-position="230">
+              <caret line="145" column="84" selection-start-line="145" selection-start-column="84" selection-end-line="145" selection-end-column="84" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -123,7 +126,7 @@
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
     <option name="y" value="22" />
-    <option name="width" value="917" />
+    <option name="width" value="905" />
     <option name="height" value="813" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -159,7 +162,19 @@
               <item name="Multithread-Server" type="b2602c69:ProjectViewProjectNode" />
               <item name="Multithread-Server" type="462c0819:PsiDirectoryNode" />
               <item name="ServerFile" type="462c0819:PsiDirectoryNode" />
+              <item name="asd" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Multithread-Server" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Multithread-Server" type="462c0819:PsiDirectoryNode" />
+              <item name="ServerFile" type="462c0819:PsiDirectoryNode" />
               <item name="deneme" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Multithread-Server" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Multithread-Server" type="462c0819:PsiDirectoryNode" />
+              <item name="ServerFile" type="462c0819:PsiDirectoryNode" />
+              <item name="ServerFile" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Multithread-Server" type="b2602c69:ProjectViewProjectNode" />
@@ -335,7 +350,21 @@
       <option name="project" value="LOCAL" />
       <updated>1557701818658</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="inişıl olmayan komit">
+      <created>1557757627671</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1557757627671</updated>
+    </task>
+    <task id="LOCAL-00005" summary="inişıl olmayan komit">
+      <created>1557786510613</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1557786510613</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -351,10 +380,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="917" height="813" extended-state="0" />
+    <frame x="0" y="22" width="905" height="813" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.23542857" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.23870221" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" />
       <window_info id="Designer" order="3" />
@@ -364,7 +393,7 @@
       <window_info id="Capture Tool" order="7" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.5026846" side_tool="true" visible="true" weight="0.21359223" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.5026846" side_tool="true" visible="true" weight="0.21359223" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49731544" weight="0.21598879" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -431,7 +460,8 @@
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="true" />
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <MESSAGE value="Write command added" />
-    <option name="LAST_COMMIT_MESSAGE" value="Write command added" />
+    <MESSAGE value="inişıl olmayan komit" />
+    <option name="LAST_COMMIT_MESSAGE" value="inişıl olmayan komit" />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
@@ -471,20 +501,42 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/compiler.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/description.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/encodings.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/gradle.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-7981" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMD Project.iml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Client/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="100" column="49" selection-start-line="100" selection-start-column="49" selection-end-line="100" selection-end-column="49" />
+        <state relative-caret-position="1156">
+          <caret line="107" column="55" selection-start-line="107" selection-start-column="55" selection-end-line="107" selection-end-column="55" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#3351#3352#0" expanded="true" />
+            <element signature="e#3379#3380#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Server/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1527">
-          <caret line="111" column="85" selection-start-line="111" selection-start-column="85" selection-end-line="111" selection-end-column="85" />
+        <state relative-caret-position="230">
+          <caret line="145" column="84" selection-start-line="145" selection-start-column="84" selection-end-line="145" selection-end-column="84" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

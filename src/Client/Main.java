@@ -46,10 +46,16 @@ public class Main extends Application {
         textField = new TextField();
         textField.setAlignment(Pos.BOTTOM_LEFT);
 
+
+
         paneForTF.setCenter(textField);
 
         mainPane = new BorderPane();
+
         textArea=new TextArea();
+        textArea.appendText("Server Folder is: ./ServerFile\nClient Folder is: ./ClientFolder\n");
+        textArea.setEditable(false);
+
         mainPane.setCenter(new ScrollPane(textArea));
         mainPane.setTop(paneForTF);
 
@@ -99,7 +105,7 @@ public class Main extends Application {
                 textArea.appendText("Executed Command: "+command+"\n");
                 toServer.flush();
                 String response = fromServer.readUTF();
-                textArea.appendText(response+"\n");
+                textArea.appendText(" "+response+"\n");
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -41,6 +41,8 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        textArea.setEditable(false);
+
         Path path = Paths.get("./ServerFile");
         if(!Files.exists((path))) {
             try {
@@ -141,6 +143,7 @@ public class Main extends Application {
                             break;
                         case "pwd":
                             outputToClient.writeUTF(rootDirectory);
+                            textArea.appendText("Client "+client+"'s current directory is "+rootDirectory+"\n");
                             break;
                         case "rm":
 
@@ -205,13 +208,20 @@ public class Main extends Application {
         public boolean commandCD (String directoryName){
             if(directoryName.contains("./ServerFile")){
                 Path path = Paths.get(directoryName.trim());
+
                 if(Files.exists(path)){
                     rootDirectory = directoryName;
                     return true;
-                }else{
+                }
+                else {
                     return false;
                 }
             }else{
+                Path path = Paths.get(rootDirectory+"/"+directoryName.trim());
+                if (Files.exists(path)){
+                    rootDirectory = rootDirectory+"/"+directoryName;
+                    return true;
+                }
                 return false;
             }
 
@@ -221,16 +231,23 @@ public class Main extends Application {
 
             //boolean create=false;
             Path path = Paths.get(rootDirectory.trim()+"/"+directoryName.trim());
-            if(!Files.exists((path))){
+
+            if (directoryName.contains("./ServerFile")){
+                path = Paths.get(directoryName.trim());
+            }
+            if(!Files.exists(path)){
                 try {
                     Files.createDirectories(path);
+                    textArea.appendText("Client "+clientNo+" created directory "+path.toString()+"\n");
+
                     //create=true;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                textArea.appendText("Client"+clientNo+" created directory "+directoryName);
                 return true;
             }else{
+                textArea.appendText("Client "+clientNo+" could not created directory "+path.toString()+"\n");
+
                 return false;
             }
 
@@ -244,15 +261,20 @@ public class Main extends Application {
 
         public boolean commandRM(String fileName,int clientNo){
             Path path = Paths.get(rootDirectory.trim()+"/"+fileName.trim());
+            if (fileName.contains("./ServerFile")){
+                path = Paths.get(fileName.trim());
+            }
             if(Files.exists((path))){
                 try {
                     Files.delete(path);
+                    textArea.appendText("Client "+clientNo+" deleted "+fileName+"\n");
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                textArea.appendText("Client"+clientNo+" deleted "+fileName);
                 return true;
             }else{
+                textArea.appendText("Client "+clientNo+" could not delete "+fileName+"\n");
                 return false;
             }
         }
@@ -260,6 +282,10 @@ public class Main extends Application {
         public boolean commandWRITE(String sourceFileName,String destFileName, int clientNo){
             Path sourcePath = Paths.get(sourceFileName);
             Path destinationPath = Paths.get(destFileName);
+            if (!destFileName.contains("./ServerFile")||!sourceFileName.contains("./ClientFolder")){
+                return false;
+            }
+
 
         /*if(Files.exists(destinationPath)){
             try {
@@ -277,7 +303,7 @@ public class Main extends Application {
                 e.printStackTrace();
             }
             if (Files.exists(destinationPath)){
-                textArea.appendText("Client"+clientNo+" uploaded "+destFileName);
+                textArea.appendText("Client "+clientNo+" uploaded "+destFileName+"\n");
             }
             return Files.exists(destinationPath);
 
@@ -287,16 +313,10 @@ public class Main extends Application {
             Path sourcePath = Paths.get(sourceFileName);
             Path destinationPath = Paths.get(destFileName);
 
-        /*if(Files.exists(destinationPath)){
-            try {
-                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (!sourceFileName.contains("./ServerFile")||!destFileName.contains("./ClientFolder")){
+                return false;
             }
-            return true;
-        }else{
-            return false;
-        }*/
+
             try {
                 Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception e) {
@@ -304,7 +324,7 @@ public class Main extends Application {
             }
 
             if (Files.exists(destinationPath)){
-                textArea.appendText("Client"+clientNo+" downloaded "+destFileName);
+                textArea.appendText("Client "+clientNo+" downloaded "+destFileName+"\n");
             }
 
             return Files.exists(destinationPath);
