@@ -20,13 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 
-
-//Server klasörü olacak ve onun dışına çıkmayacak
-//Exceptionlar ayarlanacak (Oluşabilecek hatalarda error message dönderecek)
-//Yeni client açıldığı zaman root directoryden başlayacak
-//İsteğe bağlı görsel güzelleştirmeler yapılabilir
-//
-
 public class Main extends Application {
 
 
@@ -48,7 +41,6 @@ public class Main extends Application {
             try {
                 System.out.println("var ki");
                 Files.createDirectories(path);
-                //create=true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -90,7 +82,7 @@ public class Main extends Application {
         public HandleClient(Socket socket,int client){
             this.socket=socket;
             this.client=client;
-            this.rootDirectory= "./ServerFile";//"C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server";
+            this.rootDirectory= "./ServerFile";
         }
 
         @Override
@@ -103,7 +95,7 @@ public class Main extends Application {
                     String command = inputFromClient.readUTF();
                     String cmds[] = command.split(" ");
                     System.out.println(cmds.length);
-                    //System.out.println(cmds[1]);
+
                     String cmdsnd = "";
                     for(int i=1; i<cmds.length; i++){
                         cmdsnd+=cmds[i]+" ";
@@ -125,12 +117,6 @@ public class Main extends Application {
                                 outputToClient.writeUTF("Can not change root directory\n");
                                 textArea.appendText("Client "+client+" could not change directory.\n");
                             }
-                            /*if(cmdsnd.contains("C:\\Users\\HP\\Desktop\\Ders Notlarım\\2. Sınıf\\2.Dönem\\OOPWorks\\CMD Project\\Server")){
-
-                            }else{
-                                commandCD(cmdsnd);
-
-                            }*/
 
                             break;
                         case "mkdir":
@@ -150,7 +136,7 @@ public class Main extends Application {
                             if(commandRM(cmdsnd,client)){
                                 outputToClient.writeUTF("Directory has removed!\n");
                             }else{
-                                outputToClient.writeUTF("Directory already removed!\n");
+                                outputToClient.writeUTF("Directory does not exist!\n");
                             }
 
                             break;
@@ -209,7 +195,7 @@ public class Main extends Application {
             if(directoryName.contains("./ServerFile")){
                 Path path = Paths.get(directoryName.trim());
 
-                if(Files.exists(path)){
+                if(Files.exists(path)&&path.toFile().isDirectory()){
                     rootDirectory = directoryName;
                     return true;
                 }
@@ -218,7 +204,7 @@ public class Main extends Application {
                 }
             }else{
                 Path path = Paths.get(rootDirectory+"/"+directoryName.trim());
-                if (Files.exists(path)){
+                if (Files.exists(path)&&path.toFile().isDirectory()){
                     rootDirectory = rootDirectory+"/"+directoryName;
                     return true;
                 }
@@ -229,7 +215,6 @@ public class Main extends Application {
 
         public boolean commandMKDIR (String directoryName,int clientNo){
 
-            //boolean create=false;
             Path path = Paths.get(rootDirectory.trim()+"/"+directoryName.trim());
 
             if (directoryName.contains("./ServerFile")){
@@ -251,11 +236,6 @@ public class Main extends Application {
                 return false;
             }
 
-       /* if(create){
-            return true;
-        }else{
-            return false;
-        }*/
         }
 
 
@@ -266,10 +246,13 @@ public class Main extends Application {
             }
             if(Files.exists((path))){
                 try {
-                    Files.delete(path);
+                    deleteDirectoryRecursion(path);
                     textArea.appendText("Client "+clientNo+" deleted "+fileName+"\n");
 
-                } catch (Exception e) {
+                }catch (DirectoryNotEmptyException e1){
+
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
                 return true;
@@ -279,6 +262,18 @@ public class Main extends Application {
             }
         }
 
+        void deleteDirectoryRecursion(Path path) throws IOException {
+            if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
+                try (DirectoryStream<Path> entries = Files.newDirectoryStream(path)) {
+                    for (Path entry : entries) {
+                        deleteDirectoryRecursion(entry);
+                    }
+                }
+            }
+            Files.delete(path);
+        }
+
+
         public boolean commandWRITE(String sourceFileName,String destFileName, int clientNo){
             Path sourcePath = Paths.get(sourceFileName);
             Path destinationPath = Paths.get(destFileName);
@@ -286,17 +281,6 @@ public class Main extends Application {
                 return false;
             }
 
-
-        /*if(Files.exists(destinationPath)){
-            try {
-                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return true;
-        }else{
-            return false;
-        }*/
             try {
                 Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
