@@ -13,9 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -88,18 +86,67 @@ public class Main extends Application {
         public void handle(ActionEvent event) {
 
             String command = textField.getText();
-
-            System.out.println("giden "+command);
+            String cmds[] = command.split(" ");
+            File file ;
             textField.setText("");
             try {
+                System.out.println("a");
                 toServer.writeUTF(command);
                 textArea.appendText("Executed Command: "+command+"\n");
                 toServer.flush();
-                String response = fromServer.readUTF();
-                textArea.appendText(" "+response+"\n");
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            if (cmds[0].equals("write")){
+                file = new File(cmds[1]);
+                long length = file.length();
+                if (length > Integer.MAX_VALUE) {
+                    System.out.println("File is too large.");
+                }
+                byte[] bytes = new byte[(int) length];
+
+
+                try {
+                    FileInputStream fis = new FileInputStream(file);
+                    System.out.println("b");
+                    //while ((i = fis.read(bytes)) > 0) {
+                      //  toServer.write(bytes, 0, i);
+                    //}
+                    fis.read(bytes);
+                    toServer.write(bytes);
+                    toServer.flush();
+                    //toServer = new DataOutputStream(socket.getOutputStream());
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            }else if (cmds[0].equals("read")){
+                byte bytes[];
+                try {
+                    while (fromServer.available() == 0) ;
+                    bytes = new byte[fromServer.available()];
+                    fromServer.read(bytes);
+                    FileOutputStream fos = new FileOutputStream(cmds[2]);
+                    fos.write(bytes);
+                    System.out.println(bytes.length);
+                    fos.flush();
+                }catch (IOException e){}
+            }
+            else{
+
+                System.out.println("giden "+command);
+            }
+            String response = "";
+            try {
+                response = fromServer.readUTF();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            textArea.appendText(" "+response+"\n");
+
+
         }
     }
 

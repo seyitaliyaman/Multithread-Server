@@ -8,9 +8,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -39,7 +37,7 @@ public class Main extends Application {
         Path path = Paths.get("./ServerFile");
         if(!Files.exists((path))) {
             try {
-                System.out.println("var ki");
+
                 Files.createDirectories(path);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -79,6 +77,9 @@ public class Main extends Application {
         private Socket socket;
         private String rootDirectory;
         private int client;
+        DataOutputStream outputToClient;
+        DataInputStream inputFromClient;
+        byte[] bytes;
         public HandleClient(Socket socket,int client){
             this.socket=socket;
             this.client=client;
@@ -88,19 +89,41 @@ public class Main extends Application {
         @Override
         public void run() {
             try {
-                DataInputStream inputFromClient = new DataInputStream(socket.getInputStream());
-                DataOutputStream outputToClient = new DataOutputStream(socket.getOutputStream());
+                inputFromClient = new DataInputStream(socket.getInputStream());
+                outputToClient = new DataOutputStream(socket.getOutputStream());
 
                 while (true){
-                    String command = inputFromClient.readUTF();
-                    String cmds[] = command.split(" ");
-                    System.out.println(cmds.length);
+                    String command = "";
+
+                    String cmds[];
+                    System.out.println(command);
+                    command = inputFromClient.readUTF();
+                    cmds = command.split(" ");
+
+                    if (cmds[0].equals("write")){
+                        while(inputFromClient.available() == 0);
+                        bytes = new byte[inputFromClient.available()];
+                        inputFromClient.read(bytes);
+                    }
+
+                    /*try{
+
+                        System.out.println("asd");
+                    }
+                    catch (UTFDataFormatException e){
+                        inputFromClient.read(bytes);
+                        System.out.println("lalala");
+                    }*/
+
+
 
                     String cmdsnd = "";
                     for(int i=1; i<cmds.length; i++){
                         cmdsnd+=cmds[i]+" ";
                     }
                     System.out.println(cmdsnd);
+
+                    System.out.println(cmds[0]);
 
 
                     switch (cmds[0]){
@@ -282,7 +305,15 @@ public class Main extends Application {
             }
 
             try {
-                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+
+                //Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+
+
+                FileOutputStream fos = new FileOutputStream(destinationPath.toString());
+                fos.write(bytes);
+                System.out.println(bytes.length);
+                fos.flush();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -302,7 +333,28 @@ public class Main extends Application {
             }
 
             try {
-                Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
+                File file = new File(sourcePath.toString());
+                long length = file.length();
+                if (length > Integer.MAX_VALUE) {
+                    System.out.println("File is too large.");
+                }
+                byte[] bytes = new byte[(int) length];
+
+
+                try {
+                    FileInputStream fis = new FileInputStream(file);
+                    System.out.println("b");
+                    //while ((i = fis.read(bytes)) > 0) {
+                    //  toServer.write(bytes, 0, i);
+                    //}
+                    fis.read(bytes);
+                    outputToClient.write(bytes);
+                    outputToClient.flush();
+                    //toServer = new DataOutputStream(socket.getOutputStream());
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //Files.copy(sourcePath,destinationPath,StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -316,11 +368,6 @@ public class Main extends Application {
     }
 
     /** ls, cd, mkdir, pwd, rm, write, read **/
-
-
-
-
-
 
 
     public static void main(String[] args) {
